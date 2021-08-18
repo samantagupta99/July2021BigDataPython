@@ -1,0 +1,83 @@
+1. clone the git repository using git clone <link>
+2. load ""sudo yum install unzip""
+3. unzip files using "" unzip <file_name.csv.zip> ""
+4.make dir in hdfs and move inside it
+5. put files in hdfs "" hdfs dfs -put ./<filename.csv> /user/maria_dev/movie ""
+6. go to ambari --> hive view --> upload table( /user/maria_dev/<dir_name>/<file_name>)
+7. gitbash --> hive --> create database demo1; --> use demo1; 
+
+
+Write HIVE queries to get the following results:
+
+01. first 5 entries from movies table
+-- SELECT * FROM movies LIMIT 5;
+
+02. number of unique movies
+-- SELECT COUNT ( DISTINCT title ) AS UNIQUE_MOVIES from movies;
+
+03. summary of ratings data
+-- select * from ratings
+
+04. minimum rating given to a movie
+-- SELECT MIN(rating) from ratings
+
+05. maximum rating given to a movie
+-- SELECT MAX(rating) from ratings
+
+06. is any row null in tags
+-- SELECT * FROM tags
+> where tags.userld = NULL OR tags.movieid=NULL OR tags.tag=NULL OR tags.timestamps=NULL;
+
+07. number of unique tags 
+-- SELECT COUNT ( DISTINCT tag ) AS UNIQUE_TAGS from tags;
+
+08. drop null rows from tags and create another table of the resulting rows
+-- create table tag_new as select * from tags where userid is not null and movieid is not null and tag is not null and timestamps is not null;
+
+09. filtering to get the list of drama movies
+-- select * from movies where genres RLIKE'Drama';
+
+10. total number of drama movies
+-- SELECT COUNT ( title ) from movies where genres='Drama';
+
+11. filtering to get the list of comedy movies
+-- select * from movies where genres RLIKE 'Comedy';
+
+12. total no. of comedy movies
+-- SELECT COUNT(genres) from movies where genres RLIKE 'Comedy';
+
+13. search movie id by tag search
+-- 
+
+14. displays first 5 data from ratings table
+-- SELECT * FROM ratings LIMIT 5;
+
+15. merging two tables movies and ratings into a new table without the "timestamp" column from the ratings table.
+-- create table movie_ratings as select m.movieid, m.title, m.genres, r.userid, r rating
+>from movies m
+>inner join ratings r on m.movieid=r.movieid;
+
+16. display high rated movies (rating > 4)
+-- SELECT m.title, r.rating from movies m INNER JOIN ratings r ON m.movieid = r.movieid where r.rating > 4 limit 15;
+
+17. display low rated movies (rating < 4)
+-- SELECT m.title, r.rating from movies m INNER JOIN ratings r ON m.movieid = r.movieid where r.rating < 4 limit 15;
+
+18. total number of unique movie genres
+-- select COUNT(DISTINCT genres) from movies ;
+
+19. top 25 most rated movies
+-- SELECT m.title, r.rating from movies m INNER JOIN ratings r ON m.movieid=r.movieid ORDER BY r.rating limit 25;
+
+20. slicing out columns to display only title and genres columns from movies table
+-- select title, genres from movies;
+
+21. extract year from title of the movie
+-- select movieid , substr(split(title , '\\(')[1], 0 , 4)
+from movies limit 10;
+
+22. count how many times each of genres occur
+-- SELECT m.genres, COUNT(genres) FROM movies m GROUP BY m.genres;
+
+23. Which movie received the highest number of ratings?
+-- SELECT m.title, count(r.rating) AS Max_Rating from movies as m INNER JOIN ratings r ON m.movieid = r.movieid group by title order by Max_Rating DESC limit 1;
